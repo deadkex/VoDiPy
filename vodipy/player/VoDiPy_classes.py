@@ -216,9 +216,11 @@ class MusicPlayer:
             # Bot might have been kicked or lost connection to channel or was stopped
             if not vc or not vc.channel or self.state == MPStates.exit:
                 break
-            elif self.state == MPStates.on_next:
+            elif self.state == MPStates.on_next:  # return because button press
                 return
+
             # continue automatic queue
+            self.state = MPStates.on_next  # make sure to not react while loading song
             song = await self.queue.get_next_song()
             if not song:
                 self.state = MPStates.exit
