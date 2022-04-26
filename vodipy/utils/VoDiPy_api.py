@@ -84,7 +84,7 @@ async def yt_dl_data(link: str, playlist_pos: int = None):
     :return:
     """
     ydl_opt = {
-        "format": "worst",  # worstaudio; bestaudio/best
+        "format": "bestaudio/best",  # worstaudio/worst
         "noplaylist": MPSettings.no_playlist,  # if video of a playlist is sent, use video
         # "playlistend": 50,  # max 50 videos of a playlist
         "ignoreerrors": True,  # ignore errors, just continue
