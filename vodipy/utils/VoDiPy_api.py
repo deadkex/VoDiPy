@@ -2,8 +2,13 @@ import asyncio
 import json
 
 import aiohttp
-import yt_dlp.utils
-from yt_dlp import YoutubeDL
+try:
+    import yt_dlp.utils as yt_utils
+    from yt_dlp import YoutubeDL as YtDL
+except ImportError:
+    import youtube_dl.utils as yt_utils
+    from youtube_dl import YoutubeDL as YtDL
+
 
 from VoDiPy_secrets import youtube_api_key
 from VoDiPy_defines import MusicPlayerSettings as MPSettings
@@ -89,8 +94,8 @@ async def yt_dl_data(link: str, playlist_pos: int = None):
     if playlist_pos is not None:
         ydl_opt["playlistitems"] = playlist_pos
     try:
-        with YoutubeDL(ydl_opt) as ytdl:
+        with YtDL(ydl_opt) as ytdl:
             data = await asyncio.to_thread(ytdl.extract_info, link, download=False)
-    except yt_dlp.utils.YoutubeDLError:
+    except yt_utils.YoutubeDLError:
         return None
     return data

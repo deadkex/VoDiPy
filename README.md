@@ -8,7 +8,7 @@ It is using the [Dis-Snek](https://github.com/Discord-Snake-Pit/Dis-Snek) librar
 - [Dis-Snek](https://github.com/Discord-Snake-Pit/Dis-Snek)
   - `pip install git+https://github.com/Discord-Snake-Pit/Dis-Snek.git@dev#egg=dis-snek[voice]`
   - at a later point, it can be installed with `pip install dis-snek[voice]` 
-- Pip packages: `yt-dlp`, `aiohttp`
+- Pip packages: `yt-dlp` (or `youtube_dl`); `aiohttp`
 
 ### How to run:
 - download this project or run `git clone https://github.com/deadkex/VoDiPy`

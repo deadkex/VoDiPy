@@ -78,8 +78,11 @@ class MusicPlayerQueueSong:
             if entry.get("duration") and entry["duration"] > 0 else "Stream"
         self.desc = self.uploader + " - " + self.duration
         self.video_url = entry["webpage_url"]
-        self.stream_url = entry["url"]  # entry["formats"][0]["url"] for youtube_dl
-        self.thumbnail = entry["thumbnail"]  # entry["thumbnails"][0]["url"] for youtube_dl
+        self.stream_url = entry["url"]
+        if entry.get("thumbnail"):
+            self.thumbnail = entry["thumbnail"]
+        else:
+            self.thumbnail = entry["thumbnails"][0]["url"]
         self.loaded = True
 
 

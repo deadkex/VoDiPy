@@ -1,12 +1,4 @@
-.idea/shelf/
-.idea/workspace.xml
-.idea/dataSources/
-.idea/webServers.xml
-.idea/codeStyles/
-.idea/inspectionProfiles/
-.idea/sqlDataSources.xml
-.idea/runConfigurations.xml
-.idea/deployment.xml
+.idea/*
 /dataSources.local.xml
 /httpRequests/
 logs.log
