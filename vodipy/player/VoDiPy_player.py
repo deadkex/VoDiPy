@@ -1,6 +1,6 @@
 from typing import Union
 
-from dis_snek import InteractionContext, MessageContext, ChannelTypes, Permissions
+from dis_snek import InteractionContext, PrefixedContext, ChannelTypes, Permissions
 from dis_snek.client.errors import VoiceConnectionTimeout, VoiceWebSocketClosed
 
 from VoDiPy_defines import MusicPlayerSettings as MPSettings
@@ -11,7 +11,7 @@ from utils.VoDiPy_api import yt_api_playlist_songs_count, yt_api_playlist_data, 
 from utils.VoDiPy_utils import can_join_voice
 
 
-async def case_command_play(ctx: Union[InteractionContext, MessageContext], link):
+async def case_command_play(ctx: Union[InteractionContext, PrefixedContext], link):
     """Callback for the play command
 
     :param ctx: context
@@ -25,7 +25,7 @@ async def case_command_play(ctx: Union[InteractionContext, MessageContext], link
         return
 
     # remove automatic embedding
-    if type(ctx) == MessageContext:
+    if type(ctx) == PrefixedContext:
         if ctx.guild.me.has_permission(Permissions.MANAGE_MESSAGES):
             await ctx.message.suppress_embeds()
 

@@ -1,8 +1,8 @@
 import asyncio
 from datetime import datetime
 
-from dis_snek import Scale, listen, InteractionContext, OptionTypes, slash_option, slash_command, \
-    message_command, MessageContext, ComponentContext
+from dis_snek import Scale, listen, InteractionContext, OptionTypes, slash_option, slash_command, ComponentContext, \
+    prefixed_command, PrefixedContext
 from dis_snek.api.events import VoiceStateUpdate
 
 from VoDiPy_defines import permissions, MusicPlayerSettings
@@ -13,8 +13,8 @@ from VoDiPy_defines import MusicPlayerSettings as MPSettings
 
 
 class PlayerScale(Scale):
-    @message_command()
-    async def play(self, ctx: MessageContext):
+    @prefixed_command()
+    async def play(self, ctx: PrefixedContext):
         if len(ctx.args) == 1:
             await case_command_play(ctx, ctx.args[0])
         else:
@@ -91,15 +91,7 @@ class PlayerScale(Scale):
         if not mp or mp.state in [MPStates.exit, MPStates.ready, MPStates.loading]:
             return
 
-        # check if user switched channels
-        vc = self.bot.get_bot_voice_state(state.guild.id)
-        if event.before and event.after:
-            if event.before.channel.id == vc.channel.id:
-                event.after = None  # hacky way to say user left
-            elif event.after.channel.id == vc.channel.id:
-                event.before = None  # hacky way to say user joined
-
-        if not event.after:  # left voice
+        if not event.after or (event.before and event.after):  # left voice
             # if dj left, check timeout
             if state.member.id == mp.dj.id:
                 time = datetime.now()
@@ -108,6 +100,8 @@ class PlayerScale(Scale):
                 if mp.timer_new_dj != time:
                     return
                 mp.timer_new_dj = None
+
+            vc = self.bot.get_bot_voice_state(state.guild.id)
 
             # if dj left, assign new dj
             if state.member.id == mp.dj.id and len(vc.channel.voice_members) > 1:
