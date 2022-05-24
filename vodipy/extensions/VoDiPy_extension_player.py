@@ -1,29 +1,29 @@
 import asyncio
 from datetime import datetime
 
-from dis_snek import Scale, listen, InteractionContext, OptionTypes, slash_option, slash_command, ComponentContext, \
+from naff import Extension, listen, InteractionContext, OptionTypes, slash_option, slash_command, ComponentContext, \
     prefixed_command, PrefixedContext
-from dis_snek.api.events import VoiceStateUpdate
+from naff.api.events import VoiceStateUpdate
 
-from VoDiPy_defines import permissions, MusicPlayerSettings
 from player.VoDiPy_player import case_command_play
 from player.VoDiPy_classes import MusicPlayer
 from VoDiPy_defines import MusicPlayerStates as MPStates
 from VoDiPy_defines import MusicPlayerSettings as MPSettings
 
 
-class PlayerScale(Scale):
+class PlayerExtension(Extension):
     @prefixed_command()
     async def play(self, ctx: PrefixedContext):
         if len(ctx.args) == 1:
             await case_command_play(ctx, ctx.args[0])
         else:
-            await ctx.reply(f"Please provide a link! `{MusicPlayerSettings.message_command_prefix}play link`")
+            await ctx.reply(f"Please provide a link! `{MPSettings.message_command_prefix}play link`")
 
     @slash_command(
         name="play",
         description="Play music from youtube(videos/playlists), soundcloud, ...",
-        scopes=[x for x in permissions]
+        scopes=[x for x in MPSettings.guilds_to_sync],
+        dm_permission=False
     )
     @slash_option(
         name="link",
@@ -52,7 +52,7 @@ class PlayerScale(Scale):
                 await mp.stop()
                 return
             elif not mp.is_allowed(ctx, restrict_to_dj=c_id in ["stop", "move"]):
-                # await ctx.send("You cannot use this right now.", ephemeral=True)
+                await ctx.send("You cannot use this right now.", ephemeral=True)
                 return
 
             match c_id:
@@ -136,4 +136,4 @@ class PlayerScale(Scale):
 
 
 def setup(client):
-    PlayerScale(client)
+    PlayerExtension(client)

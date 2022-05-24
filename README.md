@@ -1,13 +1,13 @@
 # VoDiPy - Voice Discord Python - Music Bot
 This is a discord music bot with a per-guild queue system, optimized specifically for YouTube playlists.  
 For non-youtube sources (f.e. soundcloud playlists) it will take longer to load.  
-It is using the [Dis-Snek](https://github.com/Discord-Snake-Pit/Dis-Snek) library.
+It is using the [Naff](https://github.com/NAFTeam/NAFF) library.
 
 ### Dependencies:
 - [Python](https://www.python.org/downloads/) Version >= 3.10
-- [Dis-Snek](https://github.com/Discord-Snake-Pit/Dis-Snek)
-  - `pip install git+https://github.com/Discord-Snake-Pit/Dis-Snek.git@dev#egg=dis-snek[voice]`
-  - at a later point, it can be installed with `pip install dis-snek[voice]` 
+- [Naff](https://github.com/NAFTeam/NAFF)
+  - `pip install git+https://github.com/NAFTeam/NAFF.git@dev#egg=naff[voice]`
+  - at a later point it can be installed with `pip install naff[voice]` 
 - Pip packages: `yt-dlp` (or `youtube_dl`); `aiohttp`
 
 ### How to run:
@@ -19,7 +19,6 @@ It is using the [Dis-Snek](https://github.com/Discord-Snake-Pit/Dis-Snek) librar
   - the 'message content intent' has to be enabled for the message command
   - otherwise enable global syncing / guild syncing in the config for the slash command
 - setup your config in [VoDiPy_defines.py](https://github.com/deadkex/VoDiPy/blob/main/vodipy/VoDiPy_defines.py)
-  - if needed change `permissions` as explained there
   - change `player_keywords` for easier playlist/video playing
   - adjust `MusicPlayerSettings` according to your needs
 - run VoDiPy.py

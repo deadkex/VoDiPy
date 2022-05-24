@@ -1,11 +1,10 @@
 from typing import Union
 
-from dis_snek import InteractionContext, PrefixedContext, ChannelTypes, Permissions
-from dis_snek.client.errors import VoiceConnectionTimeout, VoiceWebSocketClosed
+from naff import InteractionContext, PrefixedContext, ChannelTypes, Permissions
+from naff.client.errors import VoiceConnectionTimeout, VoiceWebSocketClosed
 
 from VoDiPy_defines import MusicPlayerSettings as MPSettings
 from VoDiPy_defines import MusicPlayerStates as MPStates
-from VoDiPy_defines import player_keywords, permissions
 from player.VoDiPy_classes import MusicPlayer
 from utils.VoDiPy_api import yt_api_playlist_songs_count, yt_api_playlist_data, yt_api_video_data, yt_dl_data
 from utils.VoDiPy_utils import can_join_voice
@@ -19,9 +18,6 @@ async def case_command_play(ctx: Union[InteractionContext, PrefixedContext], lin
     """
     if ctx.channel.type == ChannelTypes.DM:
         await ctx.send("This command cannot be used in private messages!")
-        return
-    elif permissions.get(ctx.guild_id) and permissions.get(ctx.guild_id) != [] \
-            and ctx.channel.id not in permissions.get(ctx.guild_id):
         return
 
     # remove automatic embedding
@@ -59,8 +55,8 @@ async def case_command_play(ctx: Union[InteractionContext, PrefixedContext], lin
         return
 
     # Get the actual link
-    if player_keywords.get(link):
-        link = player_keywords.get(link)
+    if MPSettings.player_keywords.get(link):
+        link = MPSettings.player_keywords.get(link)
     if "youtube.com" in link:
         if "&list=" in link:
             link = link.split("&list=", 1)[0]

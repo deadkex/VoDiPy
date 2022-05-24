@@ -1,22 +1,22 @@
 from datetime import datetime
 
-from dis_snek import listen, Snake, Activity, ActivityType, Intents
-from dis_snek.client.const import __version__ as dis_snek_version
+from naff import listen, Client, Activity, ActivityType, Intents
+from naff.client.const import __version__ as naff_version
 
 import VoDiPy_secrets
-from VoDiPy_defines import MusicPlayerSettings
+from VoDiPy_defines import MusicPlayerSettings as MPSettings
 
 
-class CustomSnake(Snake):
+class CustomClient(Client):
     mps = {}
     """{guild_id: MusicPlayer}"""
 
 
-client = CustomSnake(
+client = CustomClient(
     intents=Intents.GUILD_VOICE_STATES | Intents.GUILD_MESSAGES | Intents.GUILD_MESSAGE_CONTENT | Intents.GUILDS,
     sync_interactions=True,
-    delete_unused_application_cmds=True,
-    default_prefix=MusicPlayerSettings.message_command_prefix,
+    # delete_unused_application_cmds=True,
+    default_prefix=MPSettings.message_command_prefix,
     activity=Activity(type=ActivityType.LISTENING, name="all your favorite songs"),
     send_command_tracebacks=False
 )
@@ -27,11 +27,11 @@ async def on_startup():
     print(f"* {'-' * 40}\n"
           f"* [{datetime.now().replace(microsecond=0)}]\n"
           f"* Bot started.\n"
-          f"* Dis-Snek: {dis_snek_version}\n"
+          f"* Naff: {naff_version}\n"
           f"* {'-' * 40}")
 
 
-client.load_extension("scales.VoDiPy_scale_player")
-# client.load_extension("dis_snek.debug_scale")  # adds /debug commands
+client.load_extension("extensions.VoDiPy_extension_player")
+# client.load_extension("naff.debug_extension")  # adds /debug commands
 
 client.start(VoDiPy_secrets.token)

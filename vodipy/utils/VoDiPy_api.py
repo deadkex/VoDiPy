@@ -9,7 +9,6 @@ except ImportError:
     import youtube_dl.utils as yt_utils
     from youtube_dl import YoutubeDL as YtDL
 
-
 from VoDiPy_secrets import youtube_api_key
 from VoDiPy_defines import MusicPlayerSettings as MPSettings
 

@@ -3,14 +3,13 @@ import random
 from datetime import timedelta, datetime
 from typing import Union
 
-from dis_snek import Embed, Member, ActionRow, Button, ButtonStyles, \
-    Select, SelectOption, ComponentContext, Message, Snake
-from dis_snek.api.voice.audio import AudioVolume
-from dis_snek.client.errors import NotFound, VoiceConnectionTimeout, VoiceWebSocketClosed
+from naff import Embed, Member, ActionRow, Button, ButtonStyles, \
+    Select, SelectOption, ComponentContext, Message, Client
+from naff.api.voice.audio import AudioVolume
+from naff.client.errors import NotFound, VoiceConnectionTimeout, VoiceWebSocketClosed
 
 from VoDiPy_defines import MusicPlayerSettings as MPSettings
 from VoDiPy_defines import MusicPlayerStates as MPStates
-from VoDiPy_defines import admin_user_ids
 from utils.VoDiPy_api import yt_dl_data
 from utils.VoDiPy_utils import get_next_seq, can_join_voice
 
@@ -168,7 +167,7 @@ class MusicPlayerQueue:
 
 
 class MusicPlayer:
-    client: Snake = None
+    client: Client = None
     dj: Union[Member, None] = None
     guild_id: Union[int, None] = None
     queue: MusicPlayerQueue = MusicPlayerQueue()
@@ -385,7 +384,7 @@ class MusicPlayer:
             return False
         elif restrict_to_dj:
             return (self.dj and self.dj.id == ctx.author.id and MPSettings.leave_if_empty) \
-                   or ctx.author.id in admin_user_ids
+                   or ctx.author.id in MPSettings.admin_user_ids
         else:
             return ctx.author.voice is not None and ctx.author.voice.channel is not None \
                    and ctx.author.voice.channel.id == ctx.voice_state.channel.id
@@ -427,8 +426,8 @@ class MusicPlayer:
         if song := await self.queue.get_next_song():
             await ctx.voice_state.stop()
             await self.play_loop(song, ctx)
-        else:
-            await self.stop()
+            return
+        await self.stop()
 
     async def b_shuffle(self, ctx: ComponentContext):
         """Component callback: Enable/Disable shuffle"""

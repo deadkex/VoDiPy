@@ -1,6 +1,6 @@
 from typing import Union
 
-from dis_snek import Permissions, ComponentContext, InteractionContext, MessageContext
+from naff import Permissions, ComponentContext, InteractionContext, PrefixedContext
 
 __SESSION_SEQUENCE = 0
 
@@ -12,7 +12,7 @@ def get_next_seq():
     return __SESSION_SEQUENCE
 
 
-def can_join_voice(ctx: Union[InteractionContext, MessageContext, ComponentContext]):
+def can_join_voice(ctx: Union[InteractionContext, PrefixedContext, ComponentContext]):
     """Check if the bot has enough permissions to join the ctx.authors voice channel"""
     perms = ctx.guild.me.channel_permissions(ctx.author.voice.channel)
     return Permissions.ADMINISTRATOR in perms \
