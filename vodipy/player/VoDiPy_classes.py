@@ -177,6 +177,7 @@ class MusicPlayer:
     timer_empty: Union[datetime, None] = None
     timer_paused: Union[datetime, None] = None
     timer_new_dj: Union[datetime, None] = None
+    q_lock = asyncio.Lock()
 
     def init(self, ctx):
         """Used to re-init the MusicPlayer in a guild"""
@@ -199,15 +200,20 @@ class MusicPlayer:
 
     async def stop(self):
         """Stop the mp"""
+        await self.q_lock.acquire()
         if self.state != MPStates.ready:
             self.state = MPStates.exit
             if vc := self.client.get_bot_voice_state(self.guild_id):
                 await vc.stop()
+        self.q_lock.release()
 
     async def play_loop(self, song: MusicPlayerQueueSong, ctx=None):
         """Start the queue loop to continuously play songs"""
         await self.update_embed(song=song, ctx=ctx)
         vc = self.client.get_bot_voice_state(self.guild_id)
+
+        if self.q_lock.locked():
+            self.q_lock.release()
 
         while True:
             await self.play(song)
@@ -374,13 +380,21 @@ class MusicPlayer:
         embed.add_field(name="**Wiki**", value="[Link](https://github.com/deadkex/VoDiPy)", inline=True)
         return embed
 
+    async def acquire_and_can_continue(self):
+        """Acquire the lock and check if the state is allowing continuation"""
+        await self.q_lock.acquire()
+        if self.state in [MPStates.exit, MPStates.ready]:
+            self.q_lock.release()
+            return False
+        return True  # function/play_loop/stop release it
+
     def is_allowed(self, ctx: ComponentContext, restrict_to_dj=False):
         """A check to run on all user interactions
 
         :param ctx: the context
         :param restrict_to_dj: True: User has to be the dj or admin | False: User only has to be in the voice channel
         """
-        if self.state in [MPStates.exit, MPStates.on_next, MPStates.loading]:
+        if self.q_lock.locked() or self.state in [MPStates.exit, MPStates.on_next, MPStates.loading]:
             return False
         elif restrict_to_dj:
             return (self.dj and self.dj.id == ctx.author.id and MPSettings.leave_if_empty) \
@@ -391,12 +405,15 @@ class MusicPlayer:
 
     async def callback_select(self, ctx: ComponentContext):
         """Component callback: Select a song from the queue to play"""
+        if not await self.acquire_and_can_continue():
+            return
         song = await self.queue.get_song_with_song_id(int(ctx.values[0]), load_song=True, set_queue_pos_on_success=True)
         if song and not song.error:
             self.state = MPStates.on_next
             await ctx.voice_state.stop()
             await self.play_loop(song, ctx)
         else:
+            self.q_lock.release()
             await ctx.send("The selected song is not available.", ephemeral=True)
 
     async def b_resume(self, ctx: ComponentContext):
@@ -422,6 +439,8 @@ class MusicPlayer:
 
     async def b_skip(self, ctx: ComponentContext):
         """Component callback: Skip the current song"""
+        if not await self.acquire_and_can_continue():
+            return
         self.state = MPStates.on_next
         if song := await self.queue.get_next_song():
             await ctx.voice_state.stop()
