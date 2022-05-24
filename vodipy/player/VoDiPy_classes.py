@@ -437,7 +437,7 @@ class MusicPlayer:
     async def b_lower(self, ctx: ComponentContext):
         """Component callback: Lower the volume"""
         if self.volume > 0.1:
-            self.volume -= 0.1
+            self.volume = round(self.volume - 0.1, 1)
         elif self.volume > 0.02:
             self.volume = round(self.volume - 0.02, 2)
         ctx.voice_state.volume = self.volume
@@ -448,7 +448,7 @@ class MusicPlayer:
         if self.volume < 0.1:
             self.volume = round(self.volume + 0.02, 2)
         elif self.volume < MPSettings.max_volume:
-            self.volume += 0.1
+            self.volume = round(self.volume + 0.1, 1)
         ctx.voice_state.volume = self.volume
         await self.update_embed(ctx=ctx)
 
